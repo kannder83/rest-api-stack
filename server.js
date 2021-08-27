@@ -4,11 +4,11 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 
 const app = express();
-//const db = process.env.DATABASE_URI;
+const db = process.env.DATABASE_URI;
 const PORT = process.env.PORT || 3000;
 
 //Connnect DB
-//connectDB(db);
+connectDB(db);
 
 app.use(cors());
 
@@ -23,42 +23,26 @@ app.options("*", (req, res, next) => {
 });
 
 app.use(express.json());
-//For HTML use
-app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} - ${req.ip}`);
   next();
 });
 
-//Static routes
-app.use(express.static("public"));
-app.use(express.static("css"));
+/*Create the conection:
+const authorsRoutes = require("./routes/api/authors");
+const categoriesRoutes = require("./routes/api/categories");
+const quotesRoutes = require("./routes/api/quotes");
+*/
 
-//Take a info from specify file.
-const timeRoutes = require("./routes/time");
-const nameRoutes = require("./routes/name");
-const jsonRoutes = require("./routes/json");
-const echoAllRoutes = require("./routes/echo-all");
-const { connect } = require("./routes/time");
-
-//Specifity route for file
-app.use("/routes/time", timeRoutes);
-app.use("/routes/name", nameRoutes);
-app.use("/routes/json", jsonRoutes);
-app.use("/routes/echo-all", echoAllRoutes);
+//Specifity route for file, other way to configure:
+app.use("/api/authors", require("./routes/api/authors"));
+app.use("/api/categories", require("./routes/api/categories"));
+app.use("/api/quotes", require("./routes/api/quotes"));
 
 //Router
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/views/index.html");
-});
-
-app.get("/form", (req, res) => {
-  res.sendFile(__dirname + "/views/form.html");
-});
-
-app.get("/:word/echo", (req, res) => {
-  res.json({ echo: req.params.word });
+  res.send("Hello World!");
 });
 
 app.all("*", (req, res) => {
@@ -66,5 +50,5 @@ app.all("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Listening on ${PORT}`);
+  console.log(`Listening on http://localhost:${PORT}`);
 });
